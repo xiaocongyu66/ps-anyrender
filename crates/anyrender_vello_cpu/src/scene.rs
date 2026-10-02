@@ -373,6 +373,11 @@ impl PaintScene for VelloCpuScenePainter {
         radius: f64,
         std_dev: f64,
     ) {
+        // CSS spec: blur radius B means a Gaussian with σ = B/2 (the value
+        // handed down from ps-blitz-paint is the raw CSS blur radius). Passing
+        // it through as σ makes small shadows (the common 1px hairline) render
+        // ~1.9× stronger than Chrome/Skia.
+        let std_dev = std_dev * 0.5;
         self.render_ctx.set_transform(transform);
         self.render_ctx.set_paint(PaintType::Solid(color));
         // vello_cpu 0.2 added `invert`, which fills outside the rect instead of
